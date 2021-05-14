@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+        
+    start-nginx:
+        build: 
+            context: ./Proxy_nginx
+        ports: 
+            - "7777:7777"
+        container_name: nginx
+        depends_on: 
+            - start-project-django
+        volumes: 
+            - ./Proxy_nginx:/opt/Proxy/
+        networks: 
+            - web_bridge
+    
+    start-project-django:
+        build: 
+            context: .
+        container_name: start-django
+        volumes: 
+            - ./djangoproject:/opt/djangoproject/
+        ports: 
+            - "8000:8000"
+        command: sh -c "python manage.py runserver 0.0.0.0:8000"
+        networks: 
+            - web_bridge
+
+networks: 
+    web_bridge:
+        driver: bridge
